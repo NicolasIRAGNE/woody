@@ -40,3 +40,34 @@ void    debug_print_header64(Elf64_Ehdr *hdr)
     printf("e_shnum = %d\n", hdr->e_shnum);
     printf("e_shstrndx = %d\n", hdr->e_shstrndx);
 }
+
+void	debug_print_file(struct s_woody_file *file)
+{
+	printf("DEBUG: PRINTING FILE %s\n", file->path);
+	printf("ptr: %p\n", file->ptr);
+	printf("fd: %d\n", file->fd);
+	printf("is_open: %d\n", (file->is_open != 0));
+	if (file->type == E_TYPE_ELF64)
+		printf("type: elf64\n");
+	else if (file->type == E_TYPE_ELF32)
+		printf("type: elf32\n");
+	else if (file->type == E_TYPE_UNKNOWN)
+		printf("type: unknown\n");
+	else
+		printf("SOMETHING WENT TERRIBLY WRONG THIS SHOULDNT EVER BE PRINTED\n");
+}
+
+/*struct s_woody_file //Struct to handle binary files
+{
+	char*			path;			//The relative path to the file
+	void*			ptr;			//Pointer to the mapped file contents
+	int				fd;				//File descriptor of the file
+	int				is_open : 1;	//If the fd is still open
+	enum e_type		type;
+	struct stat		st;				//Stat
+	union
+	{
+		Elf64_Ehdr *elf64;
+	} header_union;					//Union containing all the supported headers
+};
+*/
