@@ -34,7 +34,7 @@ int main(int ac, char **av)
     char *new_file;
     new_file = malloc(sizeof(PACKED_PREFIX) + sizeof(PACKED_SUFFIX) + strlen(av[1]));
     sprintf(new_file, "%s%s%s", PACKED_PREFIX, av[1], PACKED_SUFFIX);
-    new_fd = open(new_file, O_WRONLY | O_CREAT | O_TRUNC);
+    new_fd = open(new_file, O_WRONLY | O_CREAT | O_TRUNC, st.st_mode & RWX_UGO);
     if (new_fd < 0)
     {
         perror(av[0]);
