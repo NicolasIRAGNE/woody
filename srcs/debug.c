@@ -3,7 +3,7 @@
 
 void    debug_print_stat(struct stat *st)
 {
-    printf("%d\n", st->st_size);
+    ft_printf("%d\n", st->st_size);
 }
 
 void    debug_print_header64(Elf64_Ehdr *hdr)
@@ -26,35 +26,38 @@ void    debug_print_header64(Elf64_Ehdr *hdr)
 //   Elf64_Half	e_shstrndx;		/* Section header string table index */
 // } Elf64_Ehdr;
 
-    printf("e_type = %d\n", hdr->e_type);
-    printf("e_machine = %d\n", hdr->e_machine);
-    printf("e_version = %d\n", hdr->e_version);
-    printf("e_entry = %p\n", hdr->e_entry);
-    printf("e_phoff = %d\n", hdr->e_phoff);
-    printf("e_shoff = %d\n", hdr->e_shoff);
-    printf("e_flags = %d\n", hdr->e_flags);
-    printf("e_ehsize = %d\n", hdr->e_ehsize);
-    printf("e_phentsize = %d\n", hdr->e_phentsize);
-    printf("e_phnum = %d\n", hdr->e_phnum);
-    printf("e_shentsize = %d\n", hdr->e_shentsize);
-    printf("e_shnum = %d\n", hdr->e_shnum);
-    printf("e_shstrndx = %d\n", hdr->e_shstrndx);
+    ft_printf("e_type = %d\n", hdr->e_type);
+    ft_printf("e_machine = %d\n", hdr->e_machine);
+    ft_printf("e_version = %d\n", hdr->e_version);
+    ft_printf("e_entry = %p\n", hdr->e_entry);
+    ft_printf("e_phoff = %d\n", hdr->e_phoff);
+    ft_printf("e_shoff = %d\n", hdr->e_shoff);
+    ft_printf("e_flags = %d\n", hdr->e_flags);
+    ft_printf("e_ehsize = %d\n", hdr->e_ehsize);
+    ft_printf("e_phentsize = %d\n", hdr->e_phentsize);
+    ft_printf("e_phnum = %d\n", hdr->e_phnum);
+    ft_printf("e_shentsize = %d\n", hdr->e_shentsize);
+    ft_printf("e_shnum = %d\n", hdr->e_shnum);
+    ft_printf("e_shstrndx = %d\n", hdr->e_shstrndx);
 }
 
 void	debug_print_file(struct s_woody_file *file)
 {
-	printf("DEBUG: PRINTING FILE %s\n", file->path);
-	printf("ptr: %p\n", file->ptr);
-	printf("fd: %d\n", file->fd);
-	printf("is_open: %d\n", (file->is_open != 0));
+	ft_printf("DEBUG: PRINTING FILE %s\n", file->path);
+	ft_printf("ptr: %p\n", file->ptr);
+	ft_printf("fd: %d\n", file->fd);
+	ft_printf("is_open: %d\n", (file->is_open != 0));
 	if (file->type == E_TYPE_ELF64)
-		printf("type: elf64\n");
+	{
+		ft_printf("type: elf64\n");
+		debug_print_header64(file->header_union.elf64);
+	}
 	else if (file->type == E_TYPE_ELF32)
-		printf("type: elf32\n");
+		ft_printf("type: elf32\n");
 	else if (file->type == E_TYPE_UNKNOWN)
-		printf("type: unknown\n");
+		ft_printf("type: unknown\n");
 	else
-		printf("SOMETHING WENT TERRIBLY WRONG THIS SHOULDNT EVER BE PRINTED\n");
+		ft_printf("SOMETHING WENT TERRIBLY WRONG THIS SHOULDNT EVER BE PRINTED\n");
 }
 
 /*struct s_woody_file //Struct to handle binary files

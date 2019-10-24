@@ -10,7 +10,6 @@ SET (INCLUDES
     woody.h
     )
 
-
 INCLUDE_DIRECTORIES(includes)
 
 add_executable(woody ${SOURCES})

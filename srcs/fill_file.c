@@ -28,9 +28,9 @@ int		create_file(struct s_woody_file* buf, struct s_woody_file* original)
 {
 	int fd;
 
-	buf->path = malloc(sizeof(PACKED_SUFFIX) + sizeof(PACKED_PREFIX) + strlen(original->path));
-    sprintf(buf->path, "%s%s%s", PACKED_PREFIX, original->path, PACKED_SUFFIX);
-	fd = open(buf->path, O_WRONLY | O_TRUNC | O_CREAT, original->st.st_mode);
+	buf->path = malloc(sizeof(PACKED_SUFFIX) + sizeof(PACKED_PREFIX) + ft_strlen(original->path));
+    ft_sprintf(buf->path, "%s%s%s", PACKED_PREFIX, original->path, PACKED_SUFFIX);
+	fd = open(buf->path, O_WRONLY | O_TRUNC | O_CREAT, original->st.st_mode & RWX_UGO);
     if (fd < 0)
         return (1);
     buf->fd = fd;
@@ -49,7 +49,7 @@ void	fill_file_type(struct s_woody_file* buf)
 	uint32_t magic;
 
 	magic = *(uint32_t*)(buf->ptr);
-	if (magic == ELF_MAGIC)
+	if (!ft_memcmp(&magic, ELFMAG, sizeof(magic)))
 	{
 		buf->header_union.elf64 = (Elf64_Ehdr*)buf->ptr;
 		buf->type = E_TYPE_ELF64;
@@ -67,5 +67,16 @@ int		close_file(struct s_woody_file* buf)
 		buf->fd = -1;
 		return (0);
 	}
+	return (0);
+}
+
+int		build_header_elf64(struct s_woody* wrapper)
+{
+	if ((wrapper->new_file->header_union.elf64 = malloc(sizeof(Elf64_Ehdr))) == 0)
+	{
+		perror(wrapper->prog_name);
+		return (1);
+	}
+	memcpy(wrapper->new_file->header_union.elf64, wrapper->file_to_pack->header_union.elf64, sizeof(Elf64_Ehdr));
 	return (0);
 }

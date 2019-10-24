@@ -1,5 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   woody.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/10/24 12:47:05 by niragne           #+#    #+#             */
+/*   Updated: 2019/10/24 13:12:59 by niragne          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef WOODY_H
 # define WOODY_H
+
+# ifdef __APPLE__
+#	include "libft.h"
+# endif
 
 # include <elf.h>
 # include <sys/mman.h>
@@ -14,6 +30,14 @@
 # define RWX_UGO (S_IRWXU | S_IRWXG | S_IRWXO)
 
 # define ELF_MAGIC (ELFMAG0 | (ELFMAG1 << 8) | (ELFMAG2 << 16) | (ELFMAG3 << 24))
+
+# ifndef LIBFT_H
+# 	define ft_memcpy memcpy
+# 	define ft_memcmp memcmp
+# 	define ft_strlen strlen
+# 	define ft_printf printf
+# 	define ft_sprintf sprintf
+# endif
 
 enum e_type
 {
@@ -52,13 +76,20 @@ struct s_woody //General wrapper used for the executable
 	int						to_encrypt : 1;		//Should the file be packed or should just the payload be injected 
 };
 
-
+/* 
+** Debug
+*/
 void	debug_print_stat(struct stat *st);
 void	debug_print_header64(Elf64_Ehdr *hdr);
 void	debug_print_file(struct s_woody_file *file);
+
+/*
+** File handling
+*/
 int		fill_file(char* path, struct s_woody_file* buf);
 int		create_file(struct s_woody_file* buf, struct s_woody_file* original);
 void	fill_file_type(struct s_woody_file* buf);
 int		close_file(struct s_woody_file* buf);
+int		build_header_elf64(struct s_woody* wrapper);
 
 #endif
