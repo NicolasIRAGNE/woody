@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 12:47:05 by niragne           #+#    #+#             */
-/*   Updated: 2019/10/24 13:12:59 by niragne          ###   ########.fr       */
+/*   Updated: 2019/11/05 13:21:38 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,15 @@
 # define RWX_UGO (S_IRWXU | S_IRWXG | S_IRWXO)
 
 # define ELF_MAGIC (ELFMAG0 | (ELFMAG1 << 8) | (ELFMAG2 << 16) | (ELFMAG3 << 24))
+# define DEFAULT_PAYLOAD "./payload"
 
 # ifndef LIBFT_H
 # 	define ft_memcpy memcpy
 # 	define ft_memcmp memcmp
+#	define ft_strcmp strcmp
 # 	define ft_strlen strlen
 # 	define ft_printf printf
+# 	define ft_dprintf dprintf
 # 	define ft_sprintf sprintf
 # endif
 
@@ -73,6 +76,9 @@ struct s_woody //General wrapper used for the executable
 	struct s_woody_file*	file_to_pack;		//The file to be injected
 	struct s_woody_file*	file_to_inject;		//The file where the payload is extracted from
 	struct s_woody_file*	new_file;			//The new file to be created
+	struct s_payload		payload;
+	void*					old_entry;
+	void*					new_entry;
 	int						to_encrypt : 1;		//Should the file be packed or should just the payload be injected 
 };
 
@@ -91,5 +97,11 @@ int		create_file(struct s_woody_file* buf, struct s_woody_file* original);
 void	fill_file_type(struct s_woody_file* buf);
 int		close_file(struct s_woody_file* buf);
 int		build_header_elf64(struct s_woody* wrapper);
+
+/*
+** ELF parsing
+*/
+Elf64_Shdr* find_section(void *ptr_elf, char *query);
+
 
 #endif
