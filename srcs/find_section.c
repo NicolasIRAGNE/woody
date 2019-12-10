@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 14:54:42 by niragne           #+#    #+#             */
-/*   Updated: 2019/10/28 14:58:17 by niragne          ###   ########.fr       */
+/*   Updated: 2019/12/10 14:29:48 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,45 @@ Elf64_Shdr* find_section(void *ptr_elf, char *query)
 	}
 
 	return NULL;
+}
+
+Elf64_Phdr* find_codecave (void *d, int fsize, int *p, int *len)
+{
+  Elf64_Ehdr* elf_hdr = (Elf64_Ehdr *) d;
+  Elf64_Phdr* elf_seg, *text_seg;
+  int         n_seg = elf_hdr->e_phnum;
+  int         i;
+  int         text_end, gap=fsize;
+
+  elf_seg = (Elf64_Phdr *) ((unsigned char*) elf_hdr 
+			    + (unsigned int) elf_hdr->e_phoff);
+
+  for (i = 0; i < n_seg; i++)
+    {
+      if (elf_seg->p_type == PT_LOAD && elf_seg->p_flags & 0x011)
+	{
+	  printf ("+ Found .text segment (#%d)\n", i);
+	  text_seg = elf_seg;
+	  text_end = elf_seg->p_offset + elf_seg->p_filesz;
+	}
+      else
+	{
+	  if (elf_seg->p_type == PT_LOAD && 
+	      (elf_seg->p_offset - text_end) < gap) 
+	    {
+	      printf ("   * Found LOAD segment (#%d) close to .text (offset: 0x%x)\n",
+		      i, (unsigned int)elf_seg->p_offset);
+	      gap = elf_seg->p_offset - text_end;
+	    }
+	}
+      elf_seg = (Elf64_Phdr *) ((unsigned char*) elf_seg 
+			    + (unsigned int) elf_hdr->e_phentsize);
+    }
+
+  *p = text_end;
+  *len = gap;
+
+  printf ("+ .text segment gap at offset 0x%x(0x%x bytes available)\n", text_end, gap);
+
+  return text_seg;
 }

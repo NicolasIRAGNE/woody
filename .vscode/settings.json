@@ -1,6 +1,7 @@
 {
     "files.associations": {
-        "stdio.h": "c",
-        "woody.h": "c"
-    }
+		"stdio.h": "c",
+		"woody.h": "c",
+		"elf.h": "c"
+	}
 }

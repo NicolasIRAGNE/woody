@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 12:47:05 by niragne           #+#    #+#             */
-/*   Updated: 2019/11/05 13:21:38 by niragne          ###   ########.fr       */
+/*   Updated: 2019/12/10 13:10:29 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,6 @@ int		build_header_elf64(struct s_woody* wrapper);
 ** ELF parsing
 */
 Elf64_Shdr* find_section(void *ptr_elf, char *query);
-
+Elf64_Phdr* find_codecave(void *ptr_elf, int fsize, int *offset, int *cave_size);
 
 #endif
