@@ -5,6 +5,7 @@ SET (SOURCES
 	srcs/debug.c
 	srcs/fill_file.c
 	srcs/find_section.c
+	srcs/rc4.c
     )
 
 SET (INCLUDES

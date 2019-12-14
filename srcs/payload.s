@@ -33,6 +33,7 @@ _pc:
    mov rax, 0x1111111111111111
    mov rdi, 0x2222222222222222 ; addr of text section
    mov r13, 0x3333333333333333 ; size of text section
+   mov r8,	0x4444444444444444 ; rc4 key
 
    add rax, r14
    add rdi, r14

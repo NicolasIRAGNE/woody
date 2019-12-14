@@ -118,6 +118,24 @@ int main(int ac, char** av)
 	//build_header_elf64(&wrapper);
 	//debug_print_file(&new_file);
 
+
+	srand(time(NULL));
+	long k = rand();
+	k = (k << 32) | rand();
+
+	char s[] = "salut";
+	uint8_t *key = (uint8_t *)&k;
+
+	rc4_crypt(s, 5, key);
+
+	int bite = 0;
+	printf("Key:\n");
+	while (bite < 8)
+		printf("%hhx ", key[bite++]);
+	printf("\n");
+	bite = 0;
+	while (bite < 5)
+		printf("%hhx ", s[bite++]);
 end:
 	free(new_file.path);
 	close_file(&file_to_pack);
