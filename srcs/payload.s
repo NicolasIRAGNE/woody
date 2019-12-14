@@ -31,11 +31,23 @@ _pc:
    ;; jump to main
 
    mov rax, 0x1111111111111111
+   mov rdi, 0x2222222222222222 ; addr of text section
+   mov r13, 0x3333333333333333 ; size of text section
 
-   add r14, rax
-   mov rax, r14
+   add rax, r14
+   add rdi, r14
+
+_loop:
+	mov r15b, BYTE [rdi]
+	sub r15b, 42
+	mov [rdi], r15b
+	dec r13
+	inc rdi
+	cmp r13, 0
+	jne _loop
+
    jmp rax
 
 align 8
-   msg      db 'yeet', 10, 0
+   msg      db '...WOODY...', 10, 0
    msg_end  db 0x0
