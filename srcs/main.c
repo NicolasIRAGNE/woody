@@ -15,7 +15,6 @@ int    get_payload(struct s_woody* wrapper)
 	int count = 0;
 	while (i > 0 && count != 8)
 	{
-		printf("%lx\n", wrapper->payload.data[i]);
 		if (wrapper->payload.data[i] == 0x11)
 		{
 			count++;
@@ -28,34 +27,11 @@ int    get_payload(struct s_woody* wrapper)
 		{
 			uint64_t *tmp;
 			tmp = (uint64_t *)(wrapper->payload.data + i);
-			*tmp = (uint64_t)((uint64_t)(wrapper->old_entry));
+			*tmp = (uint64_t)((uint64_t)(wrapper->old_entry - wrapper->new_entry));
 			printf("TMP : %lx\n", *tmp);
 		}
 		i -= 1;
 	}
-	 i = wrapper->payload.size;
-	 count = 0;
-	while (i > 0 && count != 8)
-	{
-		printf("%lx\n", wrapper->payload.data[i]);
-		if (wrapper->payload.data[i] == 0x22)
-		{
-			count++;
-		}
-		else
-		{
-			count = 0;
-		}
-		if (count == 8)
-		{
-			uint64_t *tmp;
-			tmp = (uint64_t *)(wrapper->payload.data + i);
-			*tmp = (uint64_t)((uint64_t)(wrapper->new_entry));
-			printf("TMP : %lx\n", *tmp);
-		}
-		i -= 1;
-	}
-	return (0);
 }
 
 int		inject_payload(struct s_woody* wrapper)
@@ -63,19 +39,17 @@ int		inject_payload(struct s_woody* wrapper)
 	int offset;
 	int available_size;
 	Elf64_Phdr* t_txt_seg_ptr = find_codecave(wrapper->file_to_pack->ptr, wrapper->file_to_pack->st.st_size, &offset, &available_size);
-	uintptr_t base = t_txt_seg_ptr->p_vaddr;
+	printf("%x\n", t_txt_seg_ptr->p_offset);
+	wrapper->file_to_pack->header_union.elf64->e_entry = (Elf64_Addr)(offset);
+	wrapper->new_entry = (void*)offset;
+	get_payload(wrapper);
 
 	if(wrapper->payload.size > available_size)
 	{
-		perror("[!] Payload to big to inject.\n");
+		printf("[!] Payload too big to inject.\n");
 		return (1);
 	}
-	printf("BASE: %lx\n", base);
-	printf("TEXT_END: %lx\n", offset);
-	printf("AVAIL: %ld\n", available_size);
-	wrapper->file_to_pack->header_union.elf64->e_entry = (Elf64_Addr)(offset);
-	wrapper->new_entry = (uintptr_t)offset;
-	get_payload(wrapper);
+
 	memmove(wrapper->file_to_pack->ptr + offset, wrapper->payload.data, wrapper->payload.size);
 
 	if (write(wrapper->new_file->fd, wrapper->file_to_pack->ptr, wrapper->file_to_pack->st.st_size) == 0)
@@ -86,7 +60,6 @@ int		inject_payload(struct s_woody* wrapper)
 
 int main(int ac, char** av)
 {
-	printf("ADDR %p\n", main);
     struct s_woody wrapper;
 
     if (ac != 2)
@@ -124,12 +97,16 @@ int main(int ac, char** av)
 	struct s_woody_file file_to_inject;
 	wrapper.file_to_inject = &file_to_inject;
 
-	inject_payload(&wrapper);
-	build_header_elf64(&wrapper);
-	debug_print_file(&new_file);
+	if (inject_payload(&wrapper))
+	{
+		printf("%s: fatal: could not inject payload.\n", av[0]);
+		goto end;
+	}
+	//build_header_elf64(&wrapper);
+	//debug_print_file(&new_file);
 
-	Elf64_Shdr* p_txt_sec_ptr = find_section(file_to_pack.ptr, ".text");
-
+end:
+	free(new_file.path);
 	close_file(&file_to_pack);
 	close_file(&new_file);
 }

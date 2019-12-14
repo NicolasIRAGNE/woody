@@ -7,9 +7,9 @@ _start:
 ; 
 	call _pc
 _pc:
-	pop r15
+	pop r14
 
-	sub r15, 0x5
+	sub r14, 0x5
    push rax
    push rdi
    push rsi
@@ -31,11 +31,9 @@ _pc:
    ;; jump to main
 
    mov rax, 0x1111111111111111
-   mov rdi, 0x2222222222222222
 
-   sub r15, rdi
-   add r15, rax
-   mov rax, r15
+   add r14, rax
+   mov rax, r14
    jmp rax
 
 align 8
