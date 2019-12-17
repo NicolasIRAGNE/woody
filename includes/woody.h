@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 12:47:05 by niragne           #+#    #+#             */
-/*   Updated: 2019/12/14 15:48:00 by niragne          ###   ########.fr       */
+/*   Updated: 2019/12/17 10:14:01 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,8 @@ struct s_woody //General wrapper used for the executable
 	struct s_payload		payload;
 	void*					old_entry;
 	void*					new_entry;
-	int						to_encrypt : 1;		//Should the file be packed or should just the payload be injected 
+	int						to_encrypt : 1;		//Should the file be packed or should just the payload be injected
+	uint8_t*				key;				//RC4 key stored on 64 bits for convenience
 };
 
 /* 
@@ -107,6 +108,7 @@ Elf64_Phdr* find_codecave(void *ptr_elf, int fsize, int *offset, int *cave_size)
 /*
 ** RC4
 */
-void	rc4_crypt(char* mem, size_t size, uint8_t key[8]);
+void		rc4_crypt(char* mem, size_t size, uint8_t key[8]);
+uint64_t	generate_key(void);
 
 #endif

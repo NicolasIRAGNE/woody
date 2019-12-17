@@ -1,5 +1,6 @@
 #include "woody.h"
 #include <stdio.h>
+#include <time.h>
 
 void	replace_pattern(uint64_t pattern, char* mem, size_t size, uint64_t replace)
 {
@@ -48,9 +49,10 @@ int		inject_payload(struct s_woody* wrapper)
 	Elf64_Phdr* t_txt_seg_ptr = find_codecave(wrapper->file_to_pack->ptr, wrapper->file_to_pack->st.st_size, &offset, &available_size);
 	printf("%x\n", t_txt_seg_ptr->p_filesz);
 	
-	test_rot(wrapper->file_to_pack->ptr + t_txt_seg_ptr->p_offset, t_txt_seg_ptr->p_filesz);
+	rc4_crypt(wrapper->file_to_pack->ptr + t_txt_seg_ptr->p_offset, t_txt_seg_ptr->p_filesz, wrapper->key);
+	// rc4_crypt(wrapper->file_to_pack->ptr + t_txt_seg_ptr->p_offset, t_txt_seg_ptr->p_filesz, wrapper->key);
 	wrapper->file_to_pack->header_union.elf64->e_entry = (Elf64_Addr)(offset);
-	wrapper->new_entry = (void*)offset;
+	wrapper->new_entry = (void*)(uint64_t)offset;
 	get_payload(wrapper);
 
 	if(wrapper->payload.size > available_size)
@@ -60,6 +62,7 @@ int		inject_payload(struct s_woody* wrapper)
 	}
 	replace_pattern(0x2222222222222222L, wrapper->payload.data, wrapper->payload.size, (uint64_t)(t_txt_seg_ptr->p_offset - (uint64_t)wrapper->new_entry));	
 	replace_pattern(0x3333333333333333L, wrapper->payload.data, wrapper->payload.size, (uint64_t)(t_txt_seg_ptr->p_filesz));	
+	replace_pattern(0x4444444444444444L, wrapper->payload.data, wrapper->payload.size, *(uint64_t*)(wrapper->key));	
 
 	t_txt_seg_ptr->p_flags |= PF_W;
 
@@ -110,6 +113,11 @@ int main(int ac, char** av)
 	struct s_woody_file file_to_inject;
 	wrapper.file_to_inject = &file_to_inject;
 
+	srand(time(NULL));
+	uint64_t k = generate_key();
+
+	wrapper.key = (uint8_t *)&k;
+
 	if (inject_payload(&wrapper))
 	{
 		printf("%s: fatal: could not inject payload.\n", av[0]);
@@ -119,23 +127,10 @@ int main(int ac, char** av)
 	//debug_print_file(&new_file);
 
 
-	srand(time(NULL));
-	long k = rand();
-	k = (k << 32) | rand();
 
-	char s[] = "salut";
-	uint8_t *key = (uint8_t *)&k;
 
-	rc4_crypt(s, 5, key);
+	printf("Key: 0x%016llx\n", *(uint64_t*)(wrapper.key));
 
-	int bite = 0;
-	printf("Key:\n");
-	while (bite < 8)
-		printf("%hhx ", key[bite++]);
-	printf("\n");
-	bite = 0;
-	while (bite < 5)
-		printf("%hhx ", s[bite++]);
 end:
 	free(new_file.path);
 	close_file(&file_to_pack);

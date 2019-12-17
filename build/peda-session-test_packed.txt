@@ -1,2 +1,6 @@
-tbreak main
+break *0x5555555551cd
+break main
+break *0x555555555248
+break *0x55555555527b
+break *0x5555555552ea
 
