@@ -51,9 +51,14 @@ _init_perm:
 
    mov r12, 0
    mov r9, 0
+
+   push r8
+   add rsp, 8
 _set_perm:
-	add r9, [rsp + r12]
-	and r9, 0xff
+	mov r8, r12
+	and r8, 7
+	add r9b, BYTE [rsp + r12]
+	add r9b, BYTE [rsp - 8 + r8]
 	
 	; NEED TO SWAP rsp + r12 and rsp + r9
 	mov r11, [rsp + r9]
@@ -65,6 +70,8 @@ _set_perm:
 	cmp r12d, 256
 	jne _set_perm
 
+   pop r8
+   sub rsp, 8
    mov r12, 0 ; i
    mov r9, 0 ; j
    mov r10, 0 ; k

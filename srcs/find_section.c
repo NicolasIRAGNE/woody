@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 14:54:42 by niragne           #+#    #+#             */
-/*   Updated: 2019/12/17 09:56:05 by niragne          ###   ########.fr       */
+/*   Updated: 2019/12/20 13:02:51 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,10 @@ Elf64_Phdr* find_codecave (void *d, int fsize, int *p, int *len)
   *p = text_end;
   *len = gap;
 
-  printf ("+ .text segment gap at offset 0x%x(%d bytes available)\n", text_end, gap);
+  if (text_end)
+	printf ("+ .text segment gap at offset 0x%x(%d bytes available)\n", text_end, gap);
+  else
+	printf ("+ .text segment gap not found\n");
 
   return text_seg;
 }

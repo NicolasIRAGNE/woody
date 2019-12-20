@@ -47,6 +47,9 @@ int		inject_payload(struct s_woody* wrapper)
 	int offset;
 	int available_size;
 	Elf64_Phdr* t_txt_seg_ptr = find_codecave(wrapper->file_to_pack->ptr, wrapper->file_to_pack->st.st_size, &offset, &available_size);
+	if ((void*)t_txt_seg_ptr < wrapper->file_to_pack->ptr)
+		return (1);
+	
 	printf("%x\n", t_txt_seg_ptr->p_filesz);
 	
 	rc4_crypt(wrapper->file_to_pack->ptr + t_txt_seg_ptr->p_offset, t_txt_seg_ptr->p_filesz, wrapper->key);

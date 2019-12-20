@@ -1,3 +1,0 @@
-break *__strrchr_sse2+37
-disable $bpnum
-
