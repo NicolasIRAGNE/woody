@@ -6,7 +6,9 @@ SET (SOURCES
 	srcs/fill_file.c
 	srcs/find_section.c
 	srcs/rc4.c
-    )
+	srcs/handle_payload.c
+	srcs/tools.c
+	)
 
 SET (INCLUDES
     woody.h

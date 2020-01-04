@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/14 15:32:02 by niragne           #+#    #+#             */
-/*   Updated: 2019/12/20 13:59:44 by niragne          ###   ########.fr       */
+/*   Updated: 2019/12/20 14:07:56 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,6 @@ void	rc4_crypt(char* mem, size_t size, uint8_t key[8])
 	while (i < sizeof(perm))
 	{
 		j = (j + perm[i] + key[i % 8]) % sizeof(perm);
-		printf("J %x\n", j);
-		printf("perm i %x\n", perm[i]);
-		// j = (j + perm[i]) % sizeof(perm);
 		swap(&perm[i], &perm[j]);
 		i++;
 	}

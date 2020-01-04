@@ -22,7 +22,7 @@ _pc:
    mov rdi, 1             
    lea rsi, [rel msg]     
    mov rdx, msg_end - msg 
-   syscall                
+   syscall
 
    ;; restore cpu state
    pop rdx

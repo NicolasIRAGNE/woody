@@ -6,7 +6,7 @@
 /*   By: niragne <niragne@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/24 12:47:05 by niragne           #+#    #+#             */
-/*   Updated: 2019/12/17 10:14:01 by niragne          ###   ########.fr       */
+/*   Updated: 2020/01/04 15:26:36 by niragne          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,12 @@ int		close_file(struct s_woody_file* buf);
 int		build_header_elf64(struct s_woody* wrapper);
 
 /*
+** Payload handling
+*/
+int		get_payload(struct s_woody* wrapper);
+int		inject_payload(struct s_woody* wrapper);
+
+/*
 ** ELF parsing
 */
 Elf64_Shdr* find_section(void *ptr_elf, char *query);
@@ -110,5 +116,10 @@ Elf64_Phdr* find_codecave(void *ptr_elf, int fsize, int *offset, int *cave_size)
 */
 void		rc4_crypt(char* mem, size_t size, uint8_t key[8]);
 uint64_t	generate_key(void);
+
+/*
+** Misc
+*/
+void		replace_pattern(uint64_t pattern, char* mem, size_t size, uint64_t replace);
 
 #endif

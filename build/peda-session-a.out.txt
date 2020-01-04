@@ -1,0 +1,3 @@
+break _start
+break __asan_init
+
